@@ -22,16 +22,11 @@ Since people like to put bad apple on anything and everything, from microwaves t
 
 Tech wise, I got inspired by a geometry dash youtuber who created a level called "how", where he converted static images into shape arrays using a tool called geometrize. It's pretty cool ngl: https://www.geometrize.co.uk/, and it even comes with a command line version for easy scripting: https://github.com/Tw1ddle/geometrize-lib-example
 
-Due to lack of hindsight on my part I was limited to 25 shapes per frame, at 15fps. It doesn't look good but it's recognizable at least. My ideal vision was embedding it in the script file but even this wasn't enough, since the maximum amount of data in a krunkscript file is around 350KB or so, and the final one is 1.5MB. Oh well. 
+Due to lack of hindsight on my part I was limited to 25 shapes per frame, at 15fps. My ideal vision was embedding it in the script file but even this compromise wasn't enough, since the maximum amount of data in a krunkscript file is around 350KB or so, and the final one is 1.5MB. Oh well. 
 
+Ideally i'd like around 200 shapes at 30fps but this would be insanely large and would probably exceed the localstorage data limit. Here is what a 200 shape frame looks like.
 
-
-
-
-
-
-
-
+![Sample image: 200 shapes](sample%20frame%2022.svg)
 
 
 # Full notes (might be hard to read)
