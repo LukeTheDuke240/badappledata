@@ -1,0 +1,224 @@
+# Client Script runs only on the client
+# KrunkScript Copyright (C) Yendis Entertainment Pty Ltd
+# 
+# Add custom actions here
+
+# Runs when the game starts
+num[] encodedvid = num[];
+
+str rawdata = "";
+
+num totaldelta = 0;
+num parseindex = 0;
+bool enabled = false;
+num globalindex = 0;
+num localindex = 0;
+
+num temp1 = 0;
+str temp2 = '';
+
+num importstate = 1;
+bool defined = false;
+
+num totlength = 0;
+
+num opacityconstant = 0.8;
+
+num framerate = 1000/15;
+
+action initvariables() {
+	rawdata = GAME.COOKIES.load(
+   		 "rawdata" # str key value
+	);
+	defined = true;
+	GAME.log(rawdata);
+	totlength = lengthOf rawdata;
+	GAME.log(totlength);
+}
+
+action import() {
+	while (parseindex < importstate*100000) {
+			temp1 = 0;
+			temp2 = '';
+		
+			if(rawdata[parseindex+1] == ',') {
+				temp2 = rawdata[parseindex];
+				temp1 = toNum temp2;
+				addTo encodedvid temp1;
+				parseindex++;
+			}
+			else if(rawdata[parseindex+2] == ',') {
+				temp2 = rawdata[parseindex] + rawdata[parseindex+1];
+				temp1 = toNum temp2;
+				addTo encodedvid temp1;
+				parseindex+=2;
+			}
+			else if(rawdata[parseindex+3] == ',') {
+				temp2 = rawdata[parseindex] + rawdata[parseindex+1] + rawdata[parseindex+2];
+				temp1 = toNum temp2;
+				addTo encodedvid temp1;
+				parseindex+=3;
+			}
+			parseindex++;
+		}
+	importstate++;
+}
+
+action drawframe() {
+	globalindex = localindex;
+
+	for(num i = 0; i < 26; i++) {
+		if(i == 0) { #blank frame detection
+			if(encodedvid[globalindex+4] == 0) {
+				doRect(1, 0, 0, 256, 192);
+				doRect(1, 0, 0, 256, 192);
+				GAME.log("blank frame");
+			}
+		}
+		
+		if(encodedvid[globalindex] == 0) { #white rectangle
+			doRect(1, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3], encodedvid[globalindex+4]);
+		}
+		else if(encodedvid[globalindex] == 1) { #white rotated rectangle
+			doRotatedRect(1, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3], encodedvid[globalindex+4], encodedvid[globalindex+5]);
+		}
+		else if(encodedvid[globalindex] == 2) { #white ellipse
+			doEllipse(1, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3], encodedvid[globalindex+4]);
+		}
+		else if(encodedvid[globalindex] == 3) { #white rotated ellipse
+			doRotatedEllipse(1, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3], encodedvid[globalindex+4], encodedvid[globalindex+5]);
+		}
+		else if(encodedvid[globalindex] == 4) { #white circle
+			doCircle(1, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3]);
+		}
+		else if(encodedvid[globalindex] == 5) { #black rectangle
+			doRect(0, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3], encodedvid[globalindex+4]);
+		}
+		else if(encodedvid[globalindex] == 6) { #black rotated rectangle
+			doRotatedRect(0, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3], encodedvid[globalindex+4], encodedvid[globalindex+5]);
+		}
+		else if(encodedvid[globalindex] == 7) { #black ellipse
+			doEllipse(0, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3], encodedvid[globalindex+4]);
+		}
+		else if(encodedvid[globalindex] == 8) { #black rotated ellipse
+			doRotatedEllipse(0, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3], encodedvid[globalindex+4], encodedvid[globalindex+5]);
+		}
+		else if(encodedvid[globalindex] == 9) { #black circle
+			doCircle(0, encodedvid[globalindex+1], encodedvid[globalindex+2], encodedvid[globalindex+3]);
+		}
+	
+		globalindex += 6;
+	}
+}
+
+action doRect(num color, num x, num y, num width, num height) {
+	width = width - x;
+	height = height - y;
+	
+	if(color == 0) {
+		GAME.OVERLAY.drawRect(x, y, width, height, 0, "#000000", opacityconstant);
+	}
+
+	else if(color == 1) {
+		GAME.OVERLAY.drawRect(x, y, width, height, 0, "#FFFFFF", opacityconstant);
+	}
+}
+
+action doCircle(num color, num x, num y, num radius) {
+	if(color == 0) {
+		GAME.OVERLAY.drawCircle(x, y, radius, radius, 0, "#000000", opacityconstant);
+	}
+
+	else if(color == 1) {
+		GAME.OVERLAY.drawCircle(x, y, radius, radius, 0, "#FFFFFF", opacityconstant);
+	}
+}
+
+action doEllipse(num color, num x, num y, num rx, num ry) {
+	if(color == 0) {
+		GAME.OVERLAY.drawCircle(x, y, rx, ry, 0, "#000000", opacityconstant);
+	}
+
+	else if(color == 1) {
+		GAME.OVERLAY.drawCircle(x, y, rx, ry, 0, "#FFFFFF", opacityconstant);
+	}
+}
+
+action doRotatedRect(num color, num x, num y, num width, num height, num rotation) {
+	width = width - x;
+	height = height - y;
+	
+	if(color == 0) {
+		GAME.OVERLAY.drawRect(x+width/2, y+height/2, width, height, rotation, "#000000", opacityconstant, true);
+	}
+
+	else if(color == 1) {
+		GAME.OVERLAY.drawRect(x+width/2, y+height/2, width, height, rotation, "#FFFFFF", opacityconstant, true);
+	}
+	
+}
+
+action doRotatedEllipse(num color, num x, num y, num rx, num ry, num rotation) {
+	if(color == 0) {
+		GAME.OVERLAY.drawCircle(x, y, rx, ry, rotation, "#000000", opacityconstant);
+	}
+
+	else if(color == 1) {
+		GAME.OVERLAY.drawCircle(x, y, rx, ry, rotation, "#FFFFFF", opacityconstant);
+	}
+}
+
+public action start() {
+	GAME.COOKIES.save(
+    	"test", # str key value
+    	69 # str data value
+	);
+	GAME.log(encodedvid);
+	GAME.SETTINGS.set("uiScaling","false");
+	GAME.SETTINGS.set("sound",1);
+	GAME.SETTINGS.set("ambientVolume",1);
+    GAME.INPUTS.freeMouse();
+    GAME.UI.hideDefault();
+    GAME.DEFAULT.disable3D();
+    GAME.DEFAULT.disablePlayerBehaviour();
+    GAME.DEFAULT.disableServerSync();
+	GAME.OVERLAY.scale(4);
+
+}
+
+# Runs every game tick
+public action update(num delta) {
+	if(defined == false) {
+		initvariables();
+	}
+
+	if(parseindex < totlength-10) {
+		import();
+	}
+		
+	if(enabled == true && localindex < totlength) {
+		totaldelta+=delta;
+		if (totaldelta > framerate) {
+			localindex += 156;
+			totaldelta -= framerate;
+		}
+	}
+}
+
+# Add rendering logic in here
+public action render(num delta) {
+	if(enabled == true) {
+		GAME.OVERLAY.drawRect(0, 0, 9999, 9999, 0, "#000000", 1);
+	
+		drawframe();
+
+		GAME.OVERLAY.drawRect(0, 192, 9999, 9999, 0, "#000000");
+		GAME.OVERLAY.drawRect(256, 0, 9999, 9999, 0, "#000000");
+	}
+}
+
+# User clicked on screen
+public action onMouseClick(num button, num x, num y) {
+	enabled = true;
+}
+
